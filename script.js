@@ -1,143 +1,115 @@
 // script.js
 
-// Show a styled welcome banner instead of alert
-window.addEventListener("load", () => {
-  const banner = document.createElement("div");
-  banner.textContent = "Welcome to the portfolio of Nur Mohammad Riaz!";
-  banner.className = "welcome-banner";
-  document.body.prepend(banner);
+// Auto-scroll image gallery
+const scrollContainer = document.querySelector(".image");
 
-  setTimeout(() => banner.remove(), 4000); // auto-hide after 4s
-});
-
-// Smooth scroll for navigation links
-document.querySelectorAll("nav a").forEach(anchor => {
-  anchor.addEventListener("click", function (e) {
-    e.preventDefault();
-    const target = document.querySelector(this.getAttribute("href"));
-    if (target) {
-      target.scrollIntoView({ behavior: "smooth" });
+if (scrollContainer) {
+  let scrollAmount = 0;
+  setInterval(() => {
+    scrollAmount += 2; // speed of scroll
+    if (scrollAmount >= scrollContainer.scrollWidth - scrollContainer.clientWidth) {
+      scrollAmount = 0; // reset to start
     }
-  });
-});
+    scrollContainer.scrollTo({
+      left: scrollAmount,
+      behavior: "smooth"
+    });
+  }, 50); // interval speed
+}
 
-// Highlight active section in nav
-const sections = document.querySelectorAll("section");
-const navLinks = document.querySelectorAll("nav a");
-
-window.addEventListener("scroll", () => {
-  let current = "";
-  sections.forEach(section => {
-    const sectionTop = section.offsetTop;
-    if (pageYOffset >= sectionTop - 60) {
-      current = section.getAttribute("id");
-    }
-  });
-
-  navLinks.forEach(link => {
-    link.classList.remove("active");
-    if (link.getAttribute("href") === `#${current}`) {
-      link.classList.add("active");
-    }
-  });
-});
-
-// Dynamic year in footer
+// Dynamically update footer year
 document.addEventListener("DOMContentLoaded", () => {
   const yearSpan = document.getElementById("year");
   if (yearSpan) {
     yearSpan.textContent = new Date().getFullYear();
   }
 });
-document.addEventListener("DOMContentLoaded", () => {
-  const toggleBtn = document.createElement("button");
-  toggleBtn.textContent = "🌗 Toggle Theme";
-  toggleBtn.className = "theme-toggle";
-  document.body.prepend(toggleBtn);
 
-  toggleBtn.addEventListener("click", () => {
-    document.body.classList.toggle("dark-mode");
-
-    // Button text পরিবর্তন হবে
-    toggleBtn.textContent = document.body.classList.contains("dark-mode")
-      ? "☀️ Light Mode"
-      : "🌙 Dark Mode";
-  });
-});
-
-toggleBtn.addEventListener("click", () => { document.body.classList.toggle("dark-mode");
-  const isDark = document.body.classList.contains("dark-mode");
-  localStorage.setItem("theme", isDark ? "dark" : "light");
-  toggleBtn.textContent = isDark ? "☀️ Light Mode" : "🌙 Dark Mode";
-});
-
-// On load
-if (localStorage.getItem("theme") === "dark") {
-  document.body.classList.add("dark-mode");
-  toggleBtn.textContent = "☀️ Light Mode";
-}
-
-
-// Scroll-to-top button
-const scrollBtn = document.createElement("button");
-scrollBtn.textContent = "↑ Top";
-scrollBtn.className = "scroll-top";
-document.body.appendChild(scrollBtn);
-
-window.addEventListener("scroll", () => {
-  if (window.scrollY > 300) {
-    scrollBtn.style.display = "block";
-  } else {
-    scrollBtn.style.display = "none";
-  }
-});
-
-scrollBtn.addEventListener("click", () => {
-  window.scrollTo({ top: 0, behavior: "smooth" });
-});
-
-
-// Typing effect for headline
-const headline = document.querySelector("h1");
-const text = headline.textContent;
-headline.textContent = "";
-let i = 0;
-
-function typeWriter() {
-  if (i < text.length) {
-    headline.textContent += text.charAt(i);
-    i++;
-    setTimeout(typeWriter, 100);
-  }
-}
-typeWriter();
-
-// Add a search filter for writings
-document.addEventListener("DOMContentLoaded", () => {
-  const searchBox = document.createElement("input");
-  searchBox.placeholder = "Search writings...";
-  document.querySelector("h2:nth-of-type(4)").after(searchBox);
-
-  searchBox.addEventListener("input", () => {
-    const query = searchBox.value.toLowerCase();
-    document.querySelectorAll("ol li").forEach(item => {
-      item.style.display = item.textContent.toLowerCase().includes(query) ? "" : "none";
-    });
-  });
-});
-const writingSection = document.getElementById("writing");
-writingSection.prepend(searchBox);
-
-document.querySelectorAll("nav a[href^='#']").forEach(anchor => {
-  anchor.addEventListener("click", function (e) {
-    e.preventDefault();
-    const target = document.querySelector(this.getAttribute("href"));
-    if (target) {
-      target.scrollIntoView({ behavior: "smooth" });
+// Smooth scroll for navigation links
+document.querySelectorAll("nav a").forEach(link => {
+  link.addEventListener("click", function (e) {
+    if (this.getAttribute("href").startsWith("#")) {
+      e.preventDefault();
+      const targetId = this.getAttribute("href").substring(1);
+      const targetElement = document.getElementById(targetId);
+      if (targetElement) {
+        targetElement.scrollIntoView({ behavior: "smooth" });
+      }
     }
   });
 });
 
+// Highlight active navigation link
+const navLinks = document.querySelectorAll("nav a");
+navLinks.forEach(link => {
+  link.addEventListener("click", () => {
+    navLinks.forEach(l => l.classList.remove("active"));
+    link.classList.add("active");
+  });
+});
 
+// Dark mode toggle
+const toggleButton = document.createElement("button");
+toggleButton.textContent = "🌙 Toggle Dark Mode";
+toggleButton.style.position = "fixed";
+toggleButton.style.top = "20px";
+toggleButton.style.right = "20px";
+toggleButton.style.padding = "10px 15px";
+toggleButton.style.border = "none";
+toggleButton.style.borderRadius = "5px";
+toggleButton.style.background = "#4a90e2";
+toggleButton.style.color = "#fff";
+toggleButton.style.cursor = "pointer";
+toggleButton.style.boxShadow = "0 4px 8px rgba(0,0,0,0.2)";
+document.body.appendChild(toggleButton);
 
+toggleButton.addEventListener("click", () => {
+  document.body.classList.toggle("dark-mode");
+});
 
+// Dark mode styles
+const darkModeStyle = document.createElement("style");
+darkModeStyle.textContent = `
+  body.dark-mode {
+    background: #1e1e2f;
+    color: #e0e0e0;
+  }
+  body.dark-mode h1, 
+  body.dark-mode h2, 
+  body.dark-mode h3 {
+    color: #9dc1ff;
+  }
+  body.dark-mode nav a {
+    color: #ddd;
+  }
+  body.dark-mode nav a.active,
+  body.dark-mode nav a:hover {
+    background: #7b4397;
+    color: #fff;
+  }
+  body.dark-mode footer {
+    background: #2a2a3d;
+    color: #aaa;
+  }
+`;
+document.head.appendChild(darkModeStyle);
+
+// Scroll-to-top button
+const scrollTopBtn = document.getElementById("scrollTopBtn");
+
+// Show button when scrolled down
+window.addEventListener("scroll", () => {
+  if (window.scrollY > 300) {
+    scrollTopBtn.style.display = "block";
+  } else {
+    scrollTopBtn.style.display = "none";
+  }
+});
+
+// Smooth scroll to top when clicked
+scrollTopBtn.addEventListener("click", () => {
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
+});
